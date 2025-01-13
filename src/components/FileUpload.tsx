@@ -42,6 +42,7 @@ interface Props {
   folder: string;
   variant: "dark" | "light";
   onFileChange: (filePath: string) => void;
+  value?: string;
 }
 
 const FileUpload = ({
@@ -51,9 +52,12 @@ const FileUpload = ({
   placeholder,
   folder,
   variant,
+  value,
 }: Props) => {
   const ikUploadRef = useRef(null);
-  const [file, setFile] = useState<{ filePath: string } | null>(null);
+  const [file, setFile] = useState<{ filePath: string | null }>({
+    filePath: value ?? null,
+  });
   const [progress, setProgress] = useState(0);
 
   const styles = {
@@ -62,11 +66,12 @@ const FileUpload = ({
         ? "bg-dark-300"
         : "bg-light-600 border-gray-100 border",
     placeholder: variant === "dark" ? "text-light-100" : "text-slate-500",
-    text: variant === "dark" ? "text-light-100" : "text-dark-500",
+    text: variant === "dark" ? "text-light-100" : "text-dark-400",
   };
 
   const onError = (error: any) => {
     console.log(error);
+
     toast({
       title: `${type} upload failed`,
       description: `Your ${type} could not be uploaded. Please try again.`,
@@ -77,9 +82,10 @@ const FileUpload = ({
   const onSuccess = (res: any) => {
     setFile(res);
     onFileChange(res.filePath);
+
     toast({
       title: `${type} uploaded successfully`,
-      description: `${res.filePath} uploaded successfully`,
+      description: `${res.filePath} uploaded successfully!`,
     });
   };
 
@@ -135,8 +141,9 @@ const FileUpload = ({
         className={cn("upload-btn", styles.button)}
         onClick={(e) => {
           e.preventDefault();
+
           if (ikUploadRef.current) {
-            //@ts-ignore
+            // @ts-ignore
             ikUploadRef.current?.click();
           }
         }}
@@ -148,6 +155,7 @@ const FileUpload = ({
           height={20}
           className="object-contain"
         />
+
         <p className={cn("text-base", styles.placeholder)}>{placeholder}</p>
 
         {file && (
@@ -166,14 +174,14 @@ const FileUpload = ({
       {file &&
         (type === "image" ? (
           <IKImage
-            alt={file.filePath}
-            path={file.filePath}
+            alt={file.filePath || ""}
+            path={file.filePath || ""}
             width={500}
             height={300}
           />
         ) : type === "video" ? (
           <IKVideo
-            path={file.filePath}
+            path={file.filePath || ""}
             controls={true}
             className="h-96 w-full rounded-xl"
           />
