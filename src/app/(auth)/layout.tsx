@@ -1,10 +1,10 @@
 import Image from "next/image";
-import React from "react";
+import React, { ReactNode } from "react";
 import { auth } from "../auth";
 import { redirect } from "next/navigation";
 
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const Layout = async ({ children }: Props) => {

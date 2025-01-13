@@ -58,24 +58,25 @@ export const signUp = async (params: AuthCredentials) => {
 
   //Hash the password
   const hashedPassword = await hash(password, 10);
-
-  await workflowClient.trigger({
-    url: `${config.env.prodApiEndpoint}/api/workflow/onboarding`,
-    body: {
-      email,
-      fullName
-    }
-  })
   
   try {
     await db.insert(users).values({
       fullName,
       email,
       universityId,
-      universityCard,
       password: hashedPassword,
+      universityCard,
     });
 
+    await workflowClient.trigger({
+      url: `${config.env.prodApiEndpoint}/api/workflow/onboarding`,
+      body: {
+        email,
+        fullName
+      }
+    })
+
+    
     //Implement signIn actions
     await signInWithCredentials({ email, password });
     return { success: true };
