@@ -39,3 +39,9 @@ interface BookParams {
   videoUrl: string;
   summary: string;
 }
+
+//Les livres emprenter
+interface BorrowBookParams {
+  bookId: string
+  userId: string  //Qui emprente
+}

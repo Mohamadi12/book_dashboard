@@ -52,3 +52,22 @@ export const books = pgTable("books", {
   summary: varchar("summary").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+
+//Enregistrer les empreints
+export const borrowRecords = pgTable("borrow_records", {
+  id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(), //Référence l'identifiant de l'utilisateur qui emprunte le livre.
+  bookId: uuid("book_id")
+    .references(() => books.id)
+    .notNull(), //Référence l'identifiant du livre emprunté.
+  borrowDate: timestamp("borrow_date", { withTimezone: true })
+    .defaultNow()
+    .notNull(), //Date et heure de l'emprunt du livre.
+  dueDate: date("due_date").notNull(), //Date limite de retour du livre
+  returnDate: date("return_date"), //Date de retour réel du livre.
+  status: BORROW_STATUS_ENUM("status").default("BORROWED").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
